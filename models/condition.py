@@ -5,5 +5,5 @@ class Condition(ABC):
     """
 
     @abstractmethod
-    def execute(self, expected_result: bool=True) -> bool:
+    def execute(self, expected_result) -> bool:
         pass
