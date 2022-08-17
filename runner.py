@@ -1,9 +1,20 @@
-from core.tasks import SendEmail, SendSMS
+from core.tasks import SendEmail, SendSMS, VisitWebsite, AddOrRemoveFromList, ApplyOrRemoveTags, RegisterForWebinar
+from core.conditions import CheckProductStatus, OnSignUp, TrafficSourceCondition
+from core.workflow import WorkFlow
 
-send_email_task = SendEmail("email@mail.com")
-send_sms_task = SendSMS("07068360667")
+workflow_one = WorkFlow(AddOrRemoveFromList("add", "Sample Item"))
+root_id = workflow_one.node.id
 
-send_email_task.attach_observer(send_sms_task)
+# Add a task to the workflow
+email_added_task =  workflow_one.add_task(root_id, SendEmail("oforkansi.shadrach@gmail.com"))
+# Add a condition to the email task
+workflow_one.add_condition(email_added_task.id, OnSignUp(True, True))
+webinar_added_task = workflow_one.add_task(email_added_task.id, RegisterForWebinar("https://www.webinar.com", "oforkansi.shadrach@gmail.com"))
 
-send_email_task.execute()
-send_email_task.notify()
+
+# Add a task to the workflow
+sms_added_task =  workflow_one.add_task(root_id, SendSMS("+972522222222"))
+# Add a condition to the sms task
+workflow_one.add_condition(sms_added_task.id, OnSignUp(True, True))
+
+workflow_one.execute()

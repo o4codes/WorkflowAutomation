@@ -1,5 +1,5 @@
 from typing import List, Union
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from models.condition import Condition
 from models.task import Task
@@ -8,7 +8,7 @@ from models.task import Task
 class WorkFlowNode:
     id: str
     task: Task
-    child_nodes: List['WorkFlowNode'] = []
+    child_nodes: List['WorkFlowNode'] = field(default_factory=list)
 
 class WorkFlow:
     """ This class is used to organize group of tasks and conditions into a workflow
@@ -18,6 +18,7 @@ class WorkFlow:
         if issubclass(type(trigger_task), Task):
             self.__id_counter = 1
             self.node = WorkFlowNode(f"TASK_{self.__id_counter}", trigger_task)
+            return None
         raise TypeError("Trigger task must be a subclass of Task")
 
     def __get_parent_task_node(self, task_id, node: WorkFlowNode) -> WorkFlowNode:
@@ -73,7 +74,7 @@ class WorkFlow:
                 new_task_node = WorkFlowNode(f"TASK_{self.__id_counter}", task)
                 task_node.child_nodes.append(new_task_node)
                 task_node.task.attach_observer(task)
-                return task_node
+                return new_task_node
             raise ValueError("Parent task does not exist")
         raise TypeError("Task must be a subclass of Task")
 
