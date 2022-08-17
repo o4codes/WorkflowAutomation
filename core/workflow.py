@@ -51,7 +51,7 @@ class WorkFlow:
         """
         task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
-            return type(task_node.task)
+            return task_node
         return None
 
     def get_child_tasks(self, task_id = None) -> List[WorkFlowNode]:
