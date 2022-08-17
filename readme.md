@@ -4,7 +4,7 @@
 
 This is a proof of concept to demostrate tasks workflow automation tool.
 This proof of concept demonstrate how a group of tasks can be run in a manner to form workflow.
-Conditions can be created and attached to each task. Therefore, the result of the condition can 
+Conditions can be created and attached to each task. Therefore, the result of the condition can
 decide either to progress to lower node task, or to end.
 
 ## Dependencies
@@ -39,7 +39,7 @@ Sample tasks provided are SendEmail, SendSMS, VisitWebsite, AddOrRemoveFromList,
 
 A condition is an operation which must return a boolean result (True or False) after execution.
 Conditions can be attached to a Task to determine if the task should be executed or not.
-The specification for a condition is defined in the models/condition.py file. An abstract class is defined 
+The specification for a condition is defined in the models/condition.py file. An abstract class is defined
 which provides an abstract method execute. Therefore every sample condition must provide it's own implementation of the execute method.
 In core/conditions.py sample condition were provided to demostrate how tasks can be created.
 Sample conditions provided are: CheckProductStatus, OnSignUp, TrafficSourceCondition
@@ -70,3 +70,7 @@ The workflow class defines the following methods:
 An example is located in the runner.py file. It was designed to reflect the workflow in diagram below
 
 !['example diagram'](/diagrams/diagram.png)
+
+## Tests
+
+Run tests with the following command `python -m unittest`

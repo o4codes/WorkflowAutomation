@@ -18,6 +18,7 @@ class WorkFlow:
         if issubclass(type(trigger_task), Task):
             self.__id_counter = 1
             self.root_node = WorkFlowNode(f"TASK_{self.__id_counter}", trigger_task)
+            self.is_published = False
             return None
         raise TypeError("Trigger task must be a subclass of Task")
 
@@ -46,7 +47,7 @@ class WorkFlow:
                 return task_node
         return None
 
-    def get_task(self, task_id: str):
+    def get_task(self, task_id: str) -> WorkFlowNode:
         """ This returns a task by its id
         """
         task_node = self.__get_task_node(task_id, self.root_node)
@@ -114,4 +115,5 @@ class WorkFlow:
         """
         self.root_node.task.execute()
         self.root_node.task.notify()
+        self.is_published  = True
         return None

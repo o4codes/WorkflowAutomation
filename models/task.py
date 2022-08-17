@@ -29,8 +29,10 @@ class Task(ABC):
     def notify(self):
         """ This notifies all observers about task execution
         """
-        with ThreadPoolExecutor(max_workers=len(self.__observers)) as executor:
-            executor.map(self.__notify_routine, self.__observers)
+        if len(self.__observers) > 0:
+            with ThreadPoolExecutor(max_workers=len(self.__observers)) as executor:
+                executor.map(self.__notify_routine, self.__observers)
+        return None
 
     def execute_conditions(self) -> bool:
         """ This checks all conditions
