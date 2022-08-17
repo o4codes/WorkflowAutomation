@@ -9,9 +9,9 @@ decide either to progress to lower node task, or to end.
 
 ## Dependencies
 
-Language: Python
-Minimum version to be used: Python 3.8
-No external libraries was used
+1. Language: Python
+2. Minimum version to be used: Python 3.8
+3. No external libraries was used
 
 ## Setup
 
