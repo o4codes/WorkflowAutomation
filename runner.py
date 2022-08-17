@@ -2,19 +2,27 @@ from core.tasks import SendEmail, SendSMS, VisitWebsite, AddOrRemoveFromList, Ap
 from core.conditions import CheckProductStatus, OnSignUp, TrafficSourceCondition
 from core.workflow import WorkFlow
 
-workflow_one = WorkFlow(AddOrRemoveFromList("add", "Sample Item"))
+workflow_one = WorkFlow(VisitWebsite(url="https://test.com/signup"))
 root_id = workflow_one.node.id
 
-# Add a task to the workflow
-email_added_task =  workflow_one.add_task(root_id, SendEmail("oforkansi.shadrach@gmail.com"))
-# Add a condition to the email task
-workflow_one.add_condition(email_added_task.id, OnSignUp(True, True))
-webinar_added_task = workflow_one.add_task(email_added_task.id, RegisterForWebinar("https://www.webinar.com", "oforkansi.shadrach@gmail.com"))
+# branch one
+visit_facebook = workflow_one.add_task(root_id, VisitWebsite(url="https://facebook.com"))
+workflow_one.add_condition(visit_facebook.id, TrafficSourceCondition("facebook", "facebook"))
 
+# branch two
+facebook_upgrade_page = workflow_one.add_task(root_id, VisitWebsite(url="https://facebook.com/upgrade"))
+workflow_one.add_condition(facebook_upgrade_page.id, TrafficSourceCondition("facebook", "facebook"))
+workflow_one.add_condition(facebook_upgrade_page.id, CheckProductStatus("purchase", "purchase"))
 
-# Add a task to the workflow
-sms_added_task =  workflow_one.add_task(root_id, SendSMS("+972522222222"))
-# Add a condition to the sms task
-workflow_one.add_condition(sms_added_task.id, OnSignUp(True, True))
+# branch three
+find_facebook_page = workflow_one.add_task(root_id, VisitWebsite(url='https://facebook.com/find'))
+workflow_one.add_condition(find_facebook_page.id, OnSignUp(True, True))
+workflow_one.add_condition(find_facebook_page.id, TrafficSourceCondition("facebook", "facebook"))
 
+#branch four
+facebook_upgrade_page_2 = workflow_one.add_task(root_id, VisitWebsite(url="https://facebook.com/upgrade"))
+workflow_one.add_condition(facebook_upgrade_page_2.id, OnSignUp(True, True))
+workflow_one.add_condition(facebook_upgrade_page_2.id, TrafficSourceCondition("google", "google"))
+
+# execute workflow
 workflow_one.execute()
