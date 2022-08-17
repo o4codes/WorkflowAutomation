@@ -17,7 +17,7 @@ class WorkFlow:
     def __init__(self, trigger_task: Task):
         if issubclass(type(trigger_task), Task):
             self.__id_counter = 1
-            self.node = WorkFlowNode(f"TASK_{self.__id_counter}", trigger_task)
+            self.root_node = WorkFlowNode(f"TASK_{self.__id_counter}", trigger_task)
             return None
         raise TypeError("Trigger task must be a subclass of Task")
 
@@ -49,7 +49,7 @@ class WorkFlow:
     def get_task(self, task_id: str):
         """ This returns a task by its id
         """
-        task_node = self.__get_task_node(task_id, self.node)
+        task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
             return type(task_node.task)
         return None
@@ -58,7 +58,7 @@ class WorkFlow:
         """ Get all child tasks nodes from a parent task node
         """
         if task_id:
-            task_node = self.__get_task_node(task_id, self.node)
+            task_node = self.__get_task_node(task_id, self.root_node)
             if task_node:
                 return task_node.child_nodes
             return []
@@ -68,7 +68,7 @@ class WorkFlow:
         """ This adds a task to the workflow
         """
         if issubclass(type(task), Task):
-            task_node = self.__get_task_node(parent_task_id, self.node)
+            task_node = self.__get_task_node(parent_task_id, self.root_node)
             if task_node:
                 self.__id_counter += 1
                 new_task_node = WorkFlowNode(f"TASK_{self.__id_counter}", task)
@@ -82,7 +82,7 @@ class WorkFlow:
         """ This adds a condition to the workflow
         """
         if issubclass(type(condition), Condition):
-            task_node = self.__get_task_node(parent_task_id, self.node)
+            task_node = self.__get_task_node(parent_task_id, self.root_node)
             if task_node:
                 task_node.task.add_condition(condition)
                 return task_node
@@ -92,7 +92,7 @@ class WorkFlow:
     def remove_task_node(self, task_id: str):
         """ This removes a task from the workflow
         """
-        parent_node = self.__get_parent_task_node(task_id, self.node)
+        parent_node = self.__get_parent_task_node(task_id, self.root_node)
         if parent_node:
             task_node = list(filter(lambda node: node.id == task_id, parent_node.child_nodes))[0]
             parent_node.child_nodes.remove(task_node)
@@ -103,7 +103,7 @@ class WorkFlow:
     def remove_condition(self, task_id: str, condition: Condition):
         """ This removes a condition from the workflow
         """
-        task_node = self.__get_task_node(task_id, self.node)
+        task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
             task_node.task.remove_condition(condition)
             return None
@@ -112,6 +112,6 @@ class WorkFlow:
     def execute(self):
         """ This executes the workflow
         """
-        self.node.task.execute()
-        self.node.task.notify()
+        self.root_node.task.execute()
+        self.root_node.task.notify()
         return None
