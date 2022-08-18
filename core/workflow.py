@@ -24,6 +24,13 @@ class WorkFlow:
 
     def __get_parent_task_node(self, task_id, node: WorkFlowNode) -> WorkFlowNode:
         """ This gets the the parent task node by its id
+
+        Args:
+            task_id (str): The id of the task
+            node (WorkFlowNode): The node to search from
+        
+        Returns:
+            WorkFlowNode: The parent task node
         """
         children_nodes = node.child_nodes
         if task_id in [child_node.id for child_node in children_nodes]:
@@ -38,6 +45,13 @@ class WorkFlow:
 
     def __get_task_node(self, task_id, node: WorkFlowNode) -> WorkFlowNode:
         """ This gets the the task node and the parent task node by its id
+
+        Args:
+            task_id (str): The id of the task
+            node (WorkFlowNode): The node to search from
+        
+        Returns:
+            WorkFlowNode: The task node
         """
         if task_id == node.id:
             return node
@@ -49,6 +63,12 @@ class WorkFlow:
 
     def get_task(self, task_id: str) -> WorkFlowNode:
         """ This returns a task by its id
+
+        Args:
+            task_id (str): The id of the task
+        
+        Returns:
+            WorkFlowNode: The task node
         """
         task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
@@ -57,6 +77,12 @@ class WorkFlow:
 
     def get_child_tasks(self, task_id = None) -> List[WorkFlowNode]:
         """ Get all child tasks nodes from a parent task node
+
+        Args:
+            task_id (str): The id of the parent task
+
+        Returns:
+            List[WorkFlowNode]: The child tasks nodes
         """
         if task_id:
             task_node = self.__get_task_node(task_id, self.root_node)
@@ -67,6 +93,13 @@ class WorkFlow:
 
     def add_task(self, parent_task_id: str, task: Task) -> WorkFlowNode:
         """ This adds a task to the workflow
+
+        Args:
+            parent_task_id (str): The id of the parent task
+            task (Task): The task to add
+
+        Returns:
+            WorkFlowNode: The task node
         """
         if issubclass(type(task), Task):
             task_node = self.__get_task_node(parent_task_id, self.root_node)
@@ -81,6 +114,17 @@ class WorkFlow:
 
     def add_condition(self, parent_task_id: str, condition: Condition) -> Condition:
         """ This adds a condition to the workflow
+
+        Args:
+            parent_task_id (str): The id of the parent task
+            condition (Condition): The condition to add
+
+        Returns:
+            Condition: The condition added
+
+        Raises:
+            ValueError: If the parent task does not exist
+            TypeError: If the condition is not a subclass of Condition
         """
         if issubclass(type(condition), Condition):
             task_node = self.__get_task_node(parent_task_id, self.root_node)
@@ -92,6 +136,12 @@ class WorkFlow:
 
     def remove_task_node(self, task_id: str):
         """ This removes a task from the workflow
+
+        Args:
+            task_id (str): The id of the task to remove
+
+        Raises:
+            ValueError: If the task does not exist
         """
         parent_node = self.__get_parent_task_node(task_id, self.root_node)
         if parent_node:
@@ -103,6 +153,14 @@ class WorkFlow:
 
     def remove_condition(self, task_id: str, condition_id: str):
         """ This removes a condition from the workflow
+
+        Args:
+            task_id (str): The id of the task
+            condition_id (str): The id of the condition to remove
+        
+        Raises:
+            ValueError: If the task does not exist
+            ValueError: If the condition does not exist
         """
         task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
