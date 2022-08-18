@@ -29,6 +29,9 @@ class Task(ABC):
 
     def __notify_routine(self, observer: 'Task'):
         """ This is a routine that is used to notify all observers
+
+        Args:
+            observer (Task): The observer to notify
         """
         if observer.execute_conditions():
             observer.execute()
@@ -60,16 +63,29 @@ class Task(ABC):
         """
         return self.__conditions
 
-    def attach_observer(self, task: 'Task'):
+    def attach_observer(self, task: 'Task') -> 'Task':
         """ This adds a given task to the list of observers
+
+        Args:
+            task (Task): The observer to add
+
+        Returns:
+            Task: The observer added
         """
         if issubclass(type(task), Task):
             self.__observers.append(task)
-            return None
+            return task
         raise TypeError("Observer must be a subclass of Task")
 
     def detach_observer(self, task: 'Task'):
         """ This removes a given task from the list of observers
+
+        Args:
+            task (Task): The observer to remove
+
+        Raises:
+            ValueError: If the observer does not exist
+            TypeError: If the observer is not a subclass of Task
         """
         if issubclass(type(task), Task):
             task_search = list(filter(lambda observer: str(observer.id) == str(task.id), self.__observers))
@@ -79,18 +95,33 @@ class Task(ABC):
             raise ValueError("Observer not found")
         raise TypeError("Observer must be a subclass of Task")
 
-    def add_condition(self, condition: Condition):
+    def add_condition(self, condition: Condition) -> Condition:
         """ This adds a condition to the list of conditions
+
+        Args:
+            condition (Condition): The condition to add
+        
+        Returns:
+            Condition: The condition added
+        
+        Raises:
+            TypeError: If the condition is not a subclass of Condition
         """
         if issubclass(type(condition), Condition):
             self.__conditions.append(condition)
-            return None
+            return condition
         raise TypeError("Condition must be a subclass of Condition")
 
     def remove_condition(self, condition_id: str):
         """ This removes a condition from the list of conditions
+
+        Args:
+            condition_id (str): The id of the condition to remove
+        
+        Raises:
+            ValueError: If the condition does not exist
         """
-        condition_search = list(filter(lambda cond: str(cond.id == condition_id), self.__conditions))
+        condition_search = list(filter(lambda cond: str(cond.id) == str(condition_id), self.__conditions))
         if len(condition_search) > 0:
             self.__conditions.remove(condition_search[0])
             return None
