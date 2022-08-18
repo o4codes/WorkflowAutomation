@@ -79,14 +79,14 @@ class WorkFlow:
             raise ValueError("Parent task does not exist")
         raise TypeError("Task must be a subclass of Task")
 
-    def add_condition(self, parent_task_id: str, condition: Condition):
+    def add_condition(self, parent_task_id: str, condition: Condition) -> Condition:
         """ This adds a condition to the workflow
         """
         if issubclass(type(condition), Condition):
             task_node = self.__get_task_node(parent_task_id, self.root_node)
             if task_node:
                 task_node.task.add_condition(condition)
-                return task_node
+                return condition
             raise ValueError("Parent task does not exist")
         raise TypeError("Condition must be a subclass of Condition")
 
@@ -96,17 +96,17 @@ class WorkFlow:
         parent_node = self.__get_parent_task_node(task_id, self.root_node)
         if parent_node:
             task_node = list(filter(lambda node: node.id == task_id, parent_node.child_nodes))[0]
+            parent_node.task.detach_observer(task_node.task)
             parent_node.child_nodes.remove(task_node)
-            task_node.task.detach_observer(task_node.task)
             return None
         raise ValueError("Task does not exist")
 
-    def remove_condition(self, task_id: str, condition: Condition):
+    def remove_condition(self, task_id: str, condition_id: str):
         """ This removes a condition from the workflow
         """
         task_node = self.__get_task_node(task_id, self.root_node)
         if task_node:
-            task_node.task.remove_condition(condition)
+            task_node.task.remove_condition(condition_id)
             return None
         raise ValueError("Task does not exist")
 

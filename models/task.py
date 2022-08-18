@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import List
 from abc import ABC, abstractmethod
+from uuid import uuid4
 
 from models.condition import Condition
 
@@ -10,6 +11,7 @@ class Task(ABC):
     """
 
     def __init__(self):
+        self.__id = uuid4()
         self.__observers: List[Task] = []
         self.__conditions: List[Condition] = []
 
@@ -19,6 +21,12 @@ class Task(ABC):
         """
         pass
     
+    @property
+    def id(self) -> str:
+        """ This returns the id of the task
+        """
+        return self.__id
+
     def __notify_routine(self, observer: 'Task'):
         """ This is a routine that is used to notify all observers
         """
@@ -42,6 +50,16 @@ class Task(ABC):
                 return False
         return True
 
+    def get_observers(self) -> List['Task']:
+        """ This returns the list of observers
+        """
+        return self.__observers
+
+    def get_conditions(self) -> List[Condition]:
+        """ This returns the list of conditions
+        """
+        return self.__conditions
+
     def attach_observer(self, task: 'Task'):
         """ This adds a given task to the list of observers
         """
@@ -54,8 +72,9 @@ class Task(ABC):
         """ This removes a given task from the list of observers
         """
         if issubclass(type(task), Task):
-            if task in self.__observers:
-                self.__observers.remove(task)
+            task_search = list(filter(lambda observer: str(observer.id) == str(task.id), self.__observers))
+            if len(task_search) > 0:
+                self.__observers.remove(task_search[0])
                 return None
             raise ValueError("Observer not found")
         raise TypeError("Observer must be a subclass of Task")
@@ -68,12 +87,11 @@ class Task(ABC):
             return None
         raise TypeError("Condition must be a subclass of Condition")
 
-    def remove_condition(self, condition: Condition):
+    def remove_condition(self, condition_id: str):
         """ This removes a condition from the list of conditions
         """
-        if issubclass(type(condition), Condition):
-            if condition in self.__conditions:
-                self.__conditions.remove(condition)
-                return None
-            raise ValueError("Condition not found")
-        raise TypeError("Condition must be a subclass of Condition")
+        condition_search = list(filter(lambda cond: str(cond.id == condition_id), self.__conditions))
+        if len(condition_search) > 0:
+            self.__conditions.remove(condition_search[0])
+            return None
+        raise ValueError("Condition not found")
